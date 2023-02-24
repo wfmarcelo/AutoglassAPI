@@ -1,8 +1,17 @@
+using AutoglassAPI.Repository;
+using AutoglassAPI.Services;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddDbContext<AutoglassContext>(opt =>
+    opt.UseInMemoryDatabase("Autoglass"));
+
+builder.Services.AddTransient<ProdutoDAL>();
+builder.Services.AddTransient<ProdutoService>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
