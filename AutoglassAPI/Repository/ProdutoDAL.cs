@@ -26,18 +26,35 @@ namespace AutoglassAPI.Repository
 
         public async Task<Produto> GetAsync(int id)
         {
-            return await _context.Produtos
+            var produto = await _context.Produtos
                         .Include(p => p.Fornecedor)
+                        .Where(p => p.Situacao == "Ativo")
                         .AsNoTracking()
                         .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (produto == null)
+            {
+                return null;
+            }
+            
+            return produto;
         }
 
-        public async Task<IList<Produto>> GetAllAsync(int pageNumber = 1, int pageSize = 10)
+        public async Task<PaginatedList<ProdutoDTO>> GetAllAsync(string? descricao, int? pageNumber, int pageSize = 10)
         {
-            return await _context.Produtos
-                        .Skip((pageNumber - 1) * pageSize)
-                        .Take(pageSize)
-                        .ToListAsync();
+            
+            
+            var produtos = from p in _context.Produtos
+                            join f in _context.Fornecedores on p.FornecedorId equals f.Id
+                            where p.Situacao == "Ativo"
+                            select p;
+
+            if (!String.IsNullOrEmpty(descricao))
+            {
+                produtos = produtos.Where(p => p.Descricao.ToUpper().Contains(descricao.ToUpper()));
+            }
+                            
+            return await PaginatedList<ProdutoDTO>.CreateAsync(produtos.Include(p => p.Fornecedor).Select(p => ProdutoDTO.GetProdutoToProdutoDTO(p)).AsNoTracking(), pageNumber ?? 1, pageSize);
         }
     }
 }

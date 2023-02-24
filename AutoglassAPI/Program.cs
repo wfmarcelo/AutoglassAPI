@@ -1,6 +1,7 @@
 using AutoglassAPI.Repository;
 using AutoglassAPI.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,7 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddDbContext<AutoglassContext>(opt =>
-    opt.UseInMemoryDatabase("Autoglass"));
+    // opt.UseInMemoryDatabase("Autoglass"));
+    opt.UseSqlite(builder.Configuration.GetConnectionString("AutoglassContext")));
+    
 
 builder.Services.AddTransient<ProdutoDAL>();
 builder.Services.AddTransient<ProdutoService>();

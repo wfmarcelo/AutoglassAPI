@@ -10,7 +10,6 @@ namespace AutoglassAPI.Services
     public class ProdutoService
     {
         private const string INATIVO = "Inativo";
-        private const string ATIVO = "Ativo";
 
         private ProdutoDAL _produtoDAL;
 
@@ -21,6 +20,7 @@ namespace AutoglassAPI.Services
 
         public async Task CreateAsync(Produto model)
         {
+            
             dateValidation(model);
 
             await _produtoDAL.CreateAsync(model);
@@ -28,6 +28,7 @@ namespace AutoglassAPI.Services
 
         public async Task UpdateAsync(Produto model)
         {
+
             dateValidation(model);
 
             await _produtoDAL.UpdateAsync(model);
@@ -42,14 +43,21 @@ namespace AutoglassAPI.Services
             await _produtoDAL.UpdateAsync(modelToDelete);
         }
 
-        public async Task<Produto> GetAsync(int id)
+        public async Task<ProdutoDTO> GetAsync(int id)
         {
-            return await _produtoDAL.GetAsync(id);
+            var model = await _produtoDAL.GetAsync(id);
+
+            if (model == null)
+            {
+                return null;
+            }
+            
+            return ProdutoDTO.GetProdutoToProdutoDTO(model);
         }
 
-        public async Task<IList<Produto>> GetAllAsync(int pageNumber = 1, int pageSize = 10)
+        public async Task<PaginatedList<ProdutoDTO>> GetAllAsync(string? descricao, int pageNumber = 1, int pageSize = 10)
         {
-            return await _produtoDAL.GetAllAsync(pageNumber, pageSize);
+            return await _produtoDAL.GetAllAsync(descricao, pageNumber, pageSize);
         }
 
         private static void dateValidation(Produto produto)
