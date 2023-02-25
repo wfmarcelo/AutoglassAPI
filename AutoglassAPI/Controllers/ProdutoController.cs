@@ -100,8 +100,6 @@ namespace AutoglassAPI.Controllers
         {
             var produtos = await _produtoService.GetAllAsync(descricao, pageNumber, pageSize);
 
-            var TotalPages = produtos.TotalPages;
-
             return produtos;
         }
 
