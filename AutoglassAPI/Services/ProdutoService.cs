@@ -56,7 +56,7 @@ namespace AutoglassAPI.Services
             return await _produtoDAL.GetAllAsync(descricao, pageNumber, pageSize);
         }
 
-        private static void dateValidation(Produto produto)
+        private void dateValidation(Produto produto)
         {
             if (produto.DataFabricacao >= produto.DataValidade)
             {
